@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comment la page a été « WebMCP-ifiée »</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f5f1e8; --paper2:#efe9db; --ink:#1c1b18; --ink-soft:#5c574c;
+    --bleu:#1f2f6e; --rouge:#c2202d; --filet:#ddd5c2;
+    --code-bg:#16181d; --code-fg:#e6e1d6; --code-key:#86b8ff; --code-str:#9fe0b0;
+    --code-com:#7f8794; --code-num:#f2c46a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Open Sans",sans-serif; color:var(--ink);
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(31,47,110,.06), transparent 60%),
+      radial-gradient(700px 400px at -5% 5%, rgba(194,32,45,.05), transparent 55%),
+      var(--paper);
+    font-size:18px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .tricolore{position:fixed;top:0;left:0;right:0;height:5px;display:flex;z-index:50}
+  .tricolore i{flex:1}
+  .tricolore i:nth-child(1){background:var(--bleu)}
+  .tricolore i:nth-child(2){background:#fff}
+  .tricolore i:nth-child(3){background:var(--rouge)}
+
+  .wrap{max-width:860px;margin:0 auto;padding:72px 28px 120px}
+
+  header.hero{margin-bottom:48px}
+  .kicker{font-family:"Open Sans",sans-serif;font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--rouge);font-weight:500}
+  h1.titre{font-family:"Open Sans",sans-serif;font-weight:600;font-size:clamp(34px,6vw,58px);
+    line-height:1.02;letter-spacing:-.015em;margin:14px 0 0}
+  h1.titre em{font-style:italic;color:var(--bleu);font-weight:450}
+  .chapeau{margin-top:20px;font-size:19px;color:var(--ink-soft);max-width:60ch}
+  .chapeau code{font-family:"Open Sans",sans-serif;font-size:.82em;background:var(--paper2);
+    padding:1px 6px;border-radius:4px;border:1px solid var(--filet)}
+
+  .toc{margin:40px 0;padding:22px 26px;background:var(--paper2);border:1px solid var(--filet);
+    border-radius:10px}
+  .toc::before{content:"Sommaire";display:block;font-family:"Open Sans",sans-serif;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px}
+  .toc ul{list-style:none}
+  .toc>ul>li{counter-increment:toc;font-size:16px;padding:3px 0}
+  .toc>ul>li>a::before{content:counter(toc) ". ";color:var(--rouge);font-family:"Open Sans",sans-serif;font-size:13px}
+  .toc ul{counter-reset:toc}
+  .toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent}
+  .toc a:hover{border-bottom-color:var(--bleu);color:var(--bleu)}
+  .toc ul ul{display:none}
+
+  h2{font-family:"Open Sans",sans-serif;font-weight:560;font-size:30px;letter-spacing:-.01em;
+    margin:64px 0 18px;padding-top:22px;border-top:2px solid var(--ink);
+    display:flex;align-items:baseline;gap:14px}
+  h2 .toclink{color:inherit;text-decoration:none}
+  h3{font-family:"Open Sans",sans-serif;font-weight:560;font-size:21px;margin:34px 0 12px}
+  p{margin:16px 0}
+  a{color:var(--bleu)}
+  strong{font-weight:600}
+  em{font-style:italic}
+
+  blockquote{margin:24px 0;padding:14px 22px;border-left:4px solid var(--bleu);
+    background:var(--paper2);border-radius:0 8px 8px 0;color:var(--ink-soft);font-size:16.5px}
+  blockquote p{margin:6px 0}
+
+  /* code inline */
+  :not(pre)>code{font-family:"Open Sans",sans-serif;font-size:.82em;
+    background:var(--paper2);padding:2px 6px;border-radius:5px;border:1px solid var(--filet);
+    color:#3a3733}
+
+  /* blocs de code */
+  pre{background:var(--code-bg);color:var(--code-fg);border-radius:12px;padding:22px 24px;
+    overflow-x:auto;margin:22px 0;font-size:14.5px;line-height:1.6;
+    box-shadow:0 18px 40px -24px rgba(28,27,24,.5);position:relative;
+    border:1px solid #23262d}
+  pre::before{content:attr(data-lang);position:absolute;top:10px;right:14px;
+    font-family:"Open Sans",sans-serif;font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--code-com)}
+  pre code{font-family:"Open Sans",sans-serif;color:inherit;background:none;border:none;padding:0;font-size:inherit}
+
+  /* tableaux */
+  table{width:100%;border-collapse:collapse;margin:24px 0;font-size:16px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--filet);vertical-align:top}
+  thead th{font-family:"Open Sans",sans-serif;font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--bleu);border-bottom:2px solid var(--bleu)}
+  tbody tr:hover{background:var(--paper2)}
+  td code{font-size:.8em}
+
+  hr{border:0;height:1px;background:var(--filet);margin:46px 0}
+
+  footer.fin{margin-top:70px;padding-top:22px;border-top:2px solid var(--ink);
+    font-family:"Open Sans",sans-serif;font-size:12px;letter-spacing:.06em;color:var(--ink-soft)}
+
+  ::selection{background:rgba(31,47,110,.18)}
+  pre ::selection{background:rgba(159,224,176,.25)}
+</style>
+</head>
+<body>
+<div class="tricolore"><i></i><i></i><i></i></div>
+<div class="wrap">
+  <header class="hero">
+    <div class="kicker">WebMCP · @webmcp-auto-ui/core</div>
+    <h1 class="titre">Comment la page a été <em>« WebMCP-ifiée »</em></h1>
+    <p class="chapeau">Le code et la balise ajoutés à la page d'accueil de la Présidence de l'Assemblée nationale pour l'exposer à un agent via <code>navigator.modelContext</code> — sans toucher au contenu visible.</p>
+  </header>
+  
+<p>Ce document explique, pas à pas, le code ajouté à la page d'accueil de la Présidence
+de l'Assemblée nationale pour l'exposer à un agent via <strong>WebMCP</strong> (le brouillon W3C
+qui standardise <code>navigator.modelContext</code>). On s'appuie sur la librairie
+<a href="https://www.npmjs.com/package/@webmcp-auto-ui/core"><code>@webmcp-auto-ui/core</code></a>.</p>
+<p>L'idée directrice : <strong>ne rien changer au contenu visible</strong>. On ajoute une seule
+balise <code>&lt;script&gt;</code>, et tout le travail se fait en JavaScript en <em>lisant</em> le DOM
+déjà présent.</p>
+<hr>
+<h2 id="1-la-seule-balise-ajoutee-a-la-page">1. La seule balise ajoutée à la page</h2>
+<p>Tout en bas du <code>&lt;body&gt;</code>, juste avant <code>&lt;/body&gt;</code>, on insère un unique bloc de script :</p>
+<pre><code class="language-html">    &lt;!-- ... tout le contenu original de la page, inchangé ... --&gt;
+
+    &lt;script&gt;
+      /* le code WebMCP, détaillé ci-dessous */
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>C'est la <strong>seule</strong> modification du balisage. Pas de nouvelle <code>&lt;div&gt;</code>, pas de CSS,
+rien dans le contenu. On place le script en fin de <code>&lt;body&gt;</code> pour garantir que tout
+le DOM (agenda, actualités, pied de page) existe déjà quand le code s'exécute :
+il pourra donc le lire sans attendre.</p>
+<blockquote>
+<p>En production, on écrirait plutôt <code>&lt;script type="module" src="webmcp.js"&gt;</code> ;
+ici tout est regroupé en ligne pour livrer <strong>un seul fichier autonome</strong>.</p>
+</blockquote>
+<hr>
+<h2 id="2-importer-les-briques-de-la-librairie">2. Importer les briques de la librairie</h2>
+<pre><code class="language-js">import {
+  initializeWebMCPPolyfill, // installe navigator.modelContext si absent
+  hasNativeWebMCP,          // dit si le navigateur a déjà l'API native
+  createToolGroup,          // regroupe nos outils (enregistrement/retrait en bloc)
+  jsonResult,               // emballe une valeur JS au format de réponse WebMCP
+  listenForAgentCalls,      // pont vers une extension d'agent (postMessage)
+} from '@webmcp-auto-ui/core';
+</code></pre>
+<p>Chaque import correspond à une responsabilité précise. On n'utilise rien d'autre.</p>
+<hr>
+<h2 id="3-etre-re-executable-sans-tout-casser">3. Être ré-exécutable sans tout casser</h2>
+<p>Si on relance le script (rechargement partiel, ré-injection), on retire d'abord
+les outils déjà posés :</p>
+<pre><code class="language-js">if (window.__presidenceWebMCP?.group) {
+  window.__presidenceWebMCP.group.abort(); // désenregistre tous nos outils
+  window.__presidenceWebMCP.stop?.();      // coupe le pont d'écoute
+}
+</code></pre>
+<p><code>window.__presidenceWebMCP</code> est le « hook » qu'on expose à la fin (voir §8) ;
+sa présence signale qu'un enregistrement précédent existe.</p>
+<hr>
+<h2 id="4-activer-lapi-webmcp">4. Activer l'API WebMCP</h2>
+<pre><code class="language-js">initializeWebMCPPolyfill({ allowInsecureContext: true });
+</code></pre>
+<p>Deux cas :</p>
+<ul>
+<li><strong>Navigateur récent avec WebMCP natif</strong> (ex. Chrome 146 + flag) : la fonction
+  détecte l'API et <strong>ne fait rien</strong> — on utilise le <code>navigator.modelContext</code> du
+  navigateur.</li>
+<li><strong>Navigateur sans l'API</strong> : la librairie installe un <em>polyfill</em>, c'est-à-dire
+  une implémentation JavaScript de <code>navigator.modelContext</code> conforme au brouillon.</li>
+</ul>
+<p><code>allowInsecureContext: true</code> autorise le fonctionnement hors HTTPS (utile en
+<code>file://</code> ou <code>http://localhost</code>).</p>
+<hr>
+<h2 id="5-lire-le-contenu-de-la-page-le-scraping">5. Lire le contenu de la page (le « scraping »)</h2>
+<p>C'est le cœur pédagogique : <strong>les outils ne contiennent pas de données en dur</strong>,
+ils lisent le DOM rendu. Trois fonctions extraient l'agenda, les actualités et le
+contact. Exemple simplifié pour l'agenda :</p>
+<pre><code class="language-js">function extraireAgenda() {
+  // 1. on récupère le texte affiché, ligne par ligne
+  const lignes = document.body.innerText
+    .split('\n').map((l) =&gt; l.trim()).filter(Boolean);
+
+  const entrees = [];
+  let dateCourante = null;
+
+  for (const ligne of lignes) {
+    // 2. un en-tête de jour (« Mercredi 29 avril ») arme une nouvelle date
+    const m = ligne.match(JOUR_RE);
+    if (m &amp;&amp; ligne.length &lt;= 30) { dateCourante = iso(m[2], m[3]); continue; }
+
+    // 3. sinon, sous une date active, la ligne devient une entrée d'agenda
+    if (dateCourante) entrees.push({ date: dateCourante, libelle: ligne });
+  }
+  return entrees;
+}
+</code></pre>
+<p>La vraie version est plus robuste (filtres anti-bruit, fusion des lignes de
+précision comme « Ambassadeur de France… », déduplication des slides du carrousel),
+mais le principe tient en trois temps : <strong>découper le texte → repérer les dates →
+rattacher chaque ligne à sa date</strong>.</p>
+<p>Pour les actualités, on s'appuie sur la structure HTML réelle plutôt que sur le
+texte : les liens du type <code>/activites/&lt;type&gt;/&lt;id&gt;</code> donnent l'identifiant et l'URL,
+et on retrouve le titre dans la carte qui entoure le lien.</p>
+<pre><code class="language-js">for (const a of document.querySelectorAll('a[href*=&quot;/activites/&quot;]')) {
+  const m = a.href.match(/\/activites\/([a-z_]+)\/(\d+)/);
+  if (!m) continue;
+  const id = Number(m[2]);          // ex. 49098
+  const type = m[1];                // ex. activite_diplomatique
+  // … on lit le titre et la date dans le texte du lien / de sa carte
+}
+</code></pre>
+<p>Ces fonctions sont appelées <strong>une fois</strong> au chargement, et leurs résultats stockés :</p>
+<pre><code class="language-js">const AGENDA = extraireAgenda();
+const ACTIVITES = extraireActivites();
+const CONTACT = extraireContact();
+</code></pre>
+<hr>
+<h2 id="6-decrire-et-enregistrer-les-outils-webmcp">6. Décrire et enregistrer les outils WebMCP</h2>
+<p>On crée d'abord un <em>groupe</em> (pour pouvoir tout retirer d'un coup, cf. §3) et une
+petite fonction qui relaie l'enregistrement vers l'API :</p>
+<pre><code class="language-js">const group = createToolGroup('presidence-an');
+const registerFn = (tool, options) =&gt;
+  navigator.modelContext.registerTool(tool, options);
+</code></pre>
+<p>Un outil WebMCP est un simple objet : un <strong>nom</strong>, une <strong>description</strong> (lue par
+l'agent pour savoir quand l'utiliser), un <strong>schéma d'entrée</strong> JSON (les paramètres
+acceptés) et une fonction <strong><code>execute</code></strong> qui renvoie le résultat.</p>
+<pre><code class="language-js">const OUTILS = [
+  {
+    name: 'get_agenda_presidente',
+    description: &quot;Agenda public de la Présidente, filtrable entre deux dates (AAAA-MM-JJ).&quot;,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date_debut: { type: 'string', description: 'AAAA-MM-JJ' },
+        date_fin:   { type: 'string', description: 'AAAA-MM-JJ' },
+      },
+    },
+    execute: async ({ date_debut, date_fin } = {}) =&gt; {
+      const d1 = date_debut || '0000-01-01';
+      const d2 = date_fin || date_debut || '9999-12-31';
+      // jsonResult emballe la valeur au format attendu par WebMCP :
+      // { content: [{ type: 'text', text: '&lt;json&gt;' }] }
+      return jsonResult(AGENDA.filter((e) =&gt; e.date &gt;= d1 &amp;&amp; e.date &lt;= d2));
+    },
+  },
+  // … 6 autres outils : search_agenda, list_activites, get_activite,
+  //   get_presidente, list_presidents, get_contact_presse
+];
+</code></pre>
+<p>Puis on les enregistre tous :</p>
+<pre><code class="language-js">OUTILS.forEach((t) =&gt; group.register(t, registerFn));
+</code></pre>
+<p>À partir d'ici, un agent qui interroge <code>navigator.modelContext</code> <strong>voit</strong> les
+7 outils, lit leur description et peut les appeler avec des arguments validés
+contre le <code>inputSchema</code>.</p>
+<p>Les 7 outils exposés :</p>
+<table>
+<thead>
+<tr>
+<th>Outil</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_agenda_presidente</code></td>
+<td>agenda filtré entre deux dates</td>
+</tr>
+<tr>
+<td><code>search_agenda</code></td>
+<td>recherche plein texte dans l'agenda</td>
+</tr>
+<tr>
+<td><code>list_activites</code></td>
+<td>actualités, filtrables par type</td>
+</tr>
+<tr>
+<td><code>get_activite</code></td>
+<td>détail d'une actualité par identifiant</td>
+</tr>
+<tr>
+<td><code>get_presidente</code></td>
+<td>fiche institutionnelle de la Présidente</td>
+</tr>
+<tr>
+<td><code>list_presidents</code></td>
+<td>présidents depuis 1958</td>
+</tr>
+<tr>
+<td><code>get_contact_presse</code></td>
+<td>coordonnées de la Présidence</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="7-pont-vers-une-extension-dagent">7. Pont vers une extension d'agent</h2>
+<pre><code class="language-js">const stop = listenForAgentCalls((name, args) =&gt; executeToolInternal(name, args));
+</code></pre>
+<p>Certaines extensions (inspecteurs WebMCP) ne lisent pas l'objet JS directement :
+elles communiquent par <code>window.postMessage</code>. Cette ligne installe l'écouteur qui
+reçoit « appelle l'outil X avec les arguments Y » et renvoie le résultat. <code>stop</code>
+permet de couper ce pont (cf. §3).</p>
+<hr>
+<h2 id="8-un-hook-pratique-autonome">8. Un hook pratique, autonome</h2>
+<p>Enfin, on expose un objet global pour tester ou piloter les outils sans dépendre
+du canal natif :</p>
+<pre><code class="language-js">const EXECUTEURS = new Map(OUTILS.map((t) =&gt; [t.name, t.execute]));
+
+async function appeler(name, args) {
+  const ex = EXECUTEURS.get(name);
+  if (!ex) throw new Error(`Outil inconnu : ${name}`);
+  return ex(args || {});            // exécute directement la fonction de l'outil
+}
+
+window.__presidenceWebMCP = {
+  group, stop,
+  natif: hasNativeWebMCP(),
+  outils: OUTILS.map((t) =&gt; t.name),
+  donnees: { agenda: AGENDA, activites: ACTIVITES, contact: CONTACT },
+  invoke: (name, args) =&gt; appeler(name, args),                         // résultat WebMCP brut
+  call:   (name, args) =&gt; appeler(name, args)
+                            .then((r) =&gt; JSON.parse(r.content[0].text)), // données JSON
+};
+</code></pre>
+<p><strong>Pourquoi une carte d'exécuteurs locale ?</strong> Quand le WebMCP natif est actif,
+<code>registerTool</code> écrit dans le registre <strong>du navigateur</strong>, pas dans celui de la
+librairie. Une fonction d'exécution interne à la librairie ne « verrait » donc pas
+les outils. En gardant nos propres <code>execute</code> dans <code>EXECUTEURS</code>, le hook
+fonctionne <strong>dans tous les cas</strong> (natif comme polyfill).</p>
+<p>Exemples d'utilisation depuis la console ou un agent :</p>
+<pre><code class="language-js">await __presidenceWebMCP.call('search_agenda', { query: 'Villeroy' });
+await __presidenceWebMCP.call('get_agenda_presidente',
+                              { date_debut: '2026-06-01', date_fin: '2026-06-30' });
+await __presidenceWebMCP.invoke('get_contact_presse'); // résultat WebMCP complet
+</code></pre>
+<hr>
+<h2 id="recapitulatif">Récapitulatif</h2>
+<table>
+<thead>
+<tr>
+<th>Étape</th>
+<th>Ce qu'on ajoute</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Balise</td>
+<td>un seul <code>&lt;script&gt;</code> avant <code>&lt;/body&gt;</code></td>
+<td>injecter le code sans toucher au contenu</td>
+</tr>
+<tr>
+<td>§2</td>
+<td>imports de la librairie</td>
+<td>briques WebMCP</td>
+</tr>
+<tr>
+<td>§4</td>
+<td><code>initializeWebMCPPolyfill</code></td>
+<td>API native ou polyfill selon le navigateur</td>
+</tr>
+<tr>
+<td>§5</td>
+<td>fonctions d'extraction</td>
+<td>lire le DOM réel, zéro donnée en dur</td>
+</tr>
+<tr>
+<td>§6</td>
+<td><code>createToolGroup</code> + <code>register</code></td>
+<td>décrire et publier les 7 outils</td>
+</tr>
+<tr>
+<td>§7</td>
+<td><code>listenForAgentCalls</code></td>
+<td>pont vers les extensions d'agent</td>
+</tr>
+<tr>
+<td>§8</td>
+<td><code>window.__presidenceWebMCP</code></td>
+<td>tester/piloter, robuste natif + polyfill</td>
+</tr>
+</tbody>
+</table>
+<p>En somme : <strong>une balise, sept outils, et tout le contenu lu en direct dans la page</strong>.</p>
+  <footer class="fin">Une balise · sept outils · contenu lu en direct dans la page.</footer>
+</div>
+<script>
+  // étiquette de langage sur chaque bloc de code (lecture seule, pas de coloration externe)
+  document.querySelectorAll('pre > code').forEach((c) => {
+    const m = [...c.classList].find((x) => x.startsWith('language-'));
+    const lang = m ? m.slice(9) : 'code';
+    c.parentElement.setAttribute('data-lang', lang === 'js' ? 'javascript' : lang);
+  });
+</script>
+</body>
+</html>
